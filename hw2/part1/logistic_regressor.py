@@ -124,7 +124,6 @@ class LogisticRegressor:
         # Compute the predicted outputs for X                                     #
         # TODO: 1 line of code expected                                           #
         ###########################################################################
-        y_pred = X' * self.theta;
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
