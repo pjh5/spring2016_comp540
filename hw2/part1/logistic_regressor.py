@@ -71,7 +71,7 @@ class LogisticRegressor:
         # Compute the loss function for unregularized logistic regression        #
         # TODO: 1-2 lines of code expected                                       #
         ##########################################################################
-        h = sigmoid(np.dot(X,theta))
+        h = utils.sigmoid(np.dot(X,theta))
         J = np.mean(-y*np.log(h) - (1-y)*np.log(1-h))
 
         ###########################################################################
@@ -99,7 +99,7 @@ class LogisticRegressor:
         # regression                                                             #
         # TODO: 1 line of code expected                                          #
         ##########################################################################
-        grad = np.dot(X.T, sigmoid(np.dot(X,theta)) - y) / m
+        grad = np.dot(X.T, utils.sigmoid(np.dot(X,theta)) - y) / m
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -125,7 +125,8 @@ class LogisticRegressor:
         # Compute the predicted outputs for X                                     #
         # TODO: 1 line of code expected                                           #
         ###########################################################################
-        y_pred = sigmoid(np.dot(X, self.theta));
+        y_pred = np.round(utils.sigmoid(np.dot(X, self.theta)));
+        
         ###########################################################################
         #                           END OF YOUR CODE                              #
         ###########################################################################
@@ -209,7 +210,7 @@ class RegLogisticRegressor:
         # Compute the loss function for regularized logistic regression          #
         # TODO: 1-2 lines of code expected                                       #
         ##########################################################################
-        h = predict(X);
+        h = utils.sigmoid(np.dot(X, theta));
         J = np.mean(-y*np.log(h) - (1-y)*np.log(1-h)) + reg*(np.dot(theta, theta) - theta[0]**2) / (2*m)
 
         ###########################################################################
@@ -239,7 +240,7 @@ class RegLogisticRegressor:
         # regression                                                             #
         # TODO: 1 line of code expected                                          #
         ##########################################################################
-        grad = (np.dot(X.T, predict(X) - y) + reg*theta*np.vstack([0, np.ones([dim-1, 1])])) / m
+        grad = (np.dot(X.T, utils.sigmoid(np.dot(X, theta)) - y))/m# + reg*theta*np.vstack([0, np.ones([dim-1, 1])])) / m
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -266,7 +267,7 @@ class RegLogisticRegressor:
         # TODO: 1 line of code expected                                           #
         #                                                                         #
         ###########################################################################
-        y_pred = sigmoid(np.dot(X, self.theta));
+        y_pred = np.round(utils.sigmoid(np.dot(X, self.theta)));
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
