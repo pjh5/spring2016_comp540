@@ -71,7 +71,7 @@ class LogisticRegressor:
         # Compute the loss function for unregularized logistic regression        #
         # TODO: 1-2 lines of code expected                                       #
         ##########################################################################
-
+        
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -124,7 +124,7 @@ class LogisticRegressor:
         # Compute the predicted outputs for X                                     #
         # TODO: 1 line of code expected                                           #
         ###########################################################################
-
+        y_pred = X' * self.theta;
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
