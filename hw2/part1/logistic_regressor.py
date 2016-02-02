@@ -71,7 +71,8 @@ class LogisticRegressor:
         # Compute the loss function for unregularized logistic regression        #
         # TODO: 1-2 lines of code expected                                       #
         ##########################################################################
-        
+        h = sigmoid(np.dot(X,theta))
+        J = np.mean(-y*np.log(h) - (1-y)*np.log(1-h))
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -98,7 +99,7 @@ class LogisticRegressor:
         # regression                                                             #
         # TODO: 1 line of code expected                                          #
         ##########################################################################
-
+        
 
         ###########################################################################
         #                           END OF YOUR CODE                              #

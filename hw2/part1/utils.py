@@ -14,7 +14,7 @@ import scipy.io
 def sigmoid (z):
     sig = np.zeros(z.shape)
     # Your code here
-    
+    sig = 1 / (1 + np.exp(-z))
     # End your ode
 
     return sig
@@ -29,7 +29,7 @@ def sigmoid (z):
 def log_features(X):
     logf = np.zeros(X.shape)
     # Your code here
-    
+    logf = 1 + np.log(x)
     # End your ode
     return logf
 
