@@ -11,7 +11,7 @@ def sigmoid (z):
     sig = np.zeros(z.shape)
     # Your code here
     # 1 line expected
-
+    sig = 1 / (1 + np.exp(-z))
     # End your ode
 
     return sig

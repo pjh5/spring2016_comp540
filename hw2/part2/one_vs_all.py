@@ -34,8 +34,11 @@ class one_vs_allLogisticRegressor:
         #   store the coefficients in a row of theta_opt                          #
         # TODO: 7-9 lines of code expected                                        #
         ###########################################################################
-
-
+        solver = ['lbfgs', 'liblinear'][penalty == 'l1']
+        for i in np.arange(self.labels.size):
+            sk_logreg = linear_model.LogisticRegression(C=1.0/reg,solver=solver,fit_intercept=False,penalty=penalty)
+            sk_logreg.fit(X, y == self.labels[i])
+            theta_opt[i,:] = sk_logreg.coef_[0]
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -63,8 +66,7 @@ class one_vs_allLogisticRegressor:
         # Compute the predicted outputs for X                                     #
         # TODO: 2 lines of code expected                                          #
         ###########################################################################
-
-
+        y_pred = np.argmax(np.dot(self.theta, X.T), axis=0)
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
