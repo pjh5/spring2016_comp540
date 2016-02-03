@@ -233,6 +233,7 @@ class RegLogisticRegressor:
         - gradient with respect to self.theta; an array of the same shape as theta
         """
         theta,X,y,reg = args
+        print 'shape of theta is ', theta.shape
         m,dim = X.shape
         grad = np.zeros((dim,))
         ##########################################################################
@@ -240,7 +241,7 @@ class RegLogisticRegressor:
         # regression                                                             #
         # TODO: 1 line of code expected                                          #
         ##########################################################################
-        grad = (np.dot(X.T, utils.sigmoid(np.dot(X, theta)) - y))/m# + reg*theta*np.vstack([0, np.ones([dim-1, 1])])) / m
+        grad = (np.dot((utils.sigmoid(np.dot(X, theta)) - y), X) + reg*theta*np.hstack([0, np.ones(dim-1)])) / m
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
