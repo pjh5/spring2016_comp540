@@ -29,7 +29,7 @@ def sigmoid (z):
 def log_features(X):
     logf = np.zeros(X.shape)
     # Your code here
-    logf = 1 + np.log(x)
+    logf = np.log(1 + X)
     # End your ode
     return logf
 
@@ -55,7 +55,7 @@ def std_features(X):
 def bin_features(X):
     tX = np.zeros(X.shape)
     # your code here
-
+    tX = X > 0
     # end your code
     return tX
 
@@ -90,7 +90,24 @@ def select_lambda_crossval(X,y,lambda_low,lambda_high,lambda_step,penalty):
 
     # Your code here
     # Implement the algorithm above.
-
+    best_loss = np.inf
+    solver = ['lbfgs', 'liblinear'][penalty == 'l1']
+    reg_lr = lr.RegLogisticRegressor()
+    
+    # Iterate over possible values of lambda
+    for reg in np.arange(lambda_low, lambda_high, lambda_step):
+    
+        # Iterate over all folds
+        kf = cross_validation.KFold(n=y.size, n_folds=10)
+        for train_index, test_index in kf:
+            sk_logreg = linear_model.LogisticRegression(C=1.0/reg,solver=solver,fit_intercept=False,penalty=penalty)
+            sk_logreg.fit(X[train_index],y[train_index])
+            closs = reg_lr.loss(sk_logreg.coef_[0], X[test_index], y[test_index], 0.0)
+            
+            if (closs < best_loss):
+                best_lost = closs
+                best_lambda = reg
+            
 
     # end your code
 

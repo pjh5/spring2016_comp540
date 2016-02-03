@@ -83,6 +83,23 @@ predy = reg_lr1.predict(XX)
 accuracy = (predy == y).sum() / float(y.size)
 print "Accuracy on the training set = ", accuracy
 
+##################################################################
+## Underfit and overfit models                                  ##
+##################################################################
+reg_under = 10
+reg_lr_under = RegLogisticRegressor()
+theta_under = reg_lr_under.train(XX,y,reg=reg_under,num_iters=1000,norm=False)
+plot_utils.plot_decision_boundary_poly(X,y,theta_under,reg_under,p,'Chip Test 1','Chip Test 2',['y = 0','y = 1'])
+plt.savefig('fig4_underfit.pdf')
+
+reg_over = 0
+reg_lr_over = RegLogisticRegressor()
+theta_over = reg_lr_under.train(XX,y,reg=reg_over,num_iters=1000,norm=False)
+plot_utils.plot_decision_boundary_poly(X,y,theta_over,reg_over,p,'Chip Test 1','Chip Test 2',['y = 0','y = 1'])
+plt.savefig('fig4_overfit.pdf')
+##################################################################
+##################################################################
+
 # Compare with model learned by sklearn's logistic regression with reg = 1/C
 # the regularization parameter set below can be varied (on a logarithmic scale)
 
