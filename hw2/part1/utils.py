@@ -12,12 +12,11 @@ import scipy.io
 ######################################################################################
 
 def sigmoid (z):
-    sig = np.zeros(z.shape)
     # Your code here
-    sig = 1 / (1 + np.exp(-z))
+    sigz = 1 / (1 + 1 / np.exp(z))
     # End your ode
 
-    return sig
+    return sigz
 
 ######################################################################################
 #   The log_features transform                                                       #
@@ -29,7 +28,7 @@ def sigmoid (z):
 def log_features(X):
     logf = np.zeros(X.shape)
     # Your code here
-    logf = np.log(1 + X)
+    logf = np.log(X + .1)
     # End your ode
     return logf
 
@@ -53,9 +52,10 @@ def std_features(X):
 ######################################################################################
 
 def bin_features(X):
-    tX = np.zeros(X.shape)
+    tX = X
     # your code here
-    tX = X > 0
+    tX[tX > 0] = 1
+    tX[tX <= 0] = 0
     # end your code
     return tX
 
@@ -90,25 +90,22 @@ def select_lambda_crossval(X,y,lambda_low,lambda_high,lambda_step,penalty):
 
     # Your code here
     # Implement the algorithm above.
-    best_loss = np.inf
-    solver = ['lbfgs', 'liblinear'][penalty == 'l1']
-    reg_lr = lr.RegLogisticRegressor()
-    
-    # Iterate over possible values of lambda
-    for reg in np.arange(lambda_low, lambda_high, lambda_step):
-    
-        # Iterate over all folds
-        kf = cross_validation.KFold(n=y.size, n_folds=10)
-        for train_index, test_index in kf:
-            sk_logreg = linear_model.LogisticRegression(C=1.0/reg,solver=solver,fit_intercept=False,penalty=penalty)
-            sk_logreg.fit(X[train_index],y[train_index])
-            closs = reg_lr.loss(sk_logreg.coef_[0], X[test_index], y[test_index], 0.0)
-            
-            if (closs < best_loss):
-                best_lost = closs
-                best_lambda = reg
-            
-
+    nsteps = int((lambda_high - lambda_low) / lambda_step) + 1
+    accuracy = np.zeros((nsteps,))
+    folds = cross_validation.KFold(X.shape[0], 10)
+    for i in range(0, nsteps):
+        current_lambda = lambda_low + i * lambda_step
+        for train_index, test_index in folds:
+            if penalty == "l2":
+                reg = linear_model.LogisticRegression(penalty=penalty,C=1.0/current_lambda, solver='lbfgs',fit_intercept=True)
+            else:
+                reg = linear_model.LogisticRegression(penalty=penalty,C=1.0/current_lambda, solver='liblinear',fit_intercept=True)
+            reg.fit(X[train_index,:],y[train_index])
+            res = reg.predict(X[test_index,:])
+            accuracy[i] += np.mean(res==y[test_index])
+        accuracy[i] /= 10
+    best_acc = max(accuracy)
+    best_lambda = lambda_low + np.argmax(accuracy) * lambda_step
     # end your code
 
     return best_lambda

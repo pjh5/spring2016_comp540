@@ -24,7 +24,7 @@ Xtest_bin = utils.bin_features(Xtest)
 
 def run_dataset(X,ytrain,Xt,ytest,type,penalty):
 
-    best_lambda = utils.select_lambda_crossval(X,ytrain,0.1,5.1,0.5,penalty)
+    best_lambda = utils.select_lambda_crossval(X,ytrain,0.1,10.1,0.5,penalty)
     print "best_lambda = ", best_lambda
 
     # train a classifier on best_lambda and run it
@@ -33,7 +33,7 @@ def run_dataset(X,ytrain,Xt,ytest,type,penalty):
     else:
         lreg = linear_model.LogisticRegression(penalty=penalty,C=1.0/best_lambda, solver='liblinear',fit_intercept=True)
     lreg.fit(X,ytrain)
-    print "Coefficients = ", lreg.intercept_,lreg.coef_
+    #print "Coefficients = ", lreg.intercept_,lreg.coef_
     predy = lreg.predict(Xt)
     print "Accuracy on set aside test set for ", type, " = ", np.mean(predy==ytest)
 
