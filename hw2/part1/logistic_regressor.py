@@ -71,7 +71,7 @@ class LogisticRegressor:
         # Compute the loss function for unregularized logistic regression        #
         # TODO: 1-2 lines of code expected                                       #
         ##########################################################################
-        h = utils.sigmoid(np.dot(X,theta))
+        h = utils.sigmoid(X.dot(theta))
         J = np.mean(-y*np.log(h) - (1-y)*np.log(1-h))
 
         ###########################################################################
@@ -99,7 +99,7 @@ class LogisticRegressor:
         # regression                                                             #
         # TODO: 1 line of code expected                                          #
         ##########################################################################
-        grad = np.dot(X.T, utils.sigmoid(np.dot(X,theta)) - y) / m
+        grad = X.T.dot(utils.sigmoid(X.dot(theta)) - y) / m
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -125,7 +125,7 @@ class LogisticRegressor:
         # Compute the predicted outputs for X                                     #
         # TODO: 1 line of code expected                                           #
         ###########################################################################
-        y_pred = np.round(utils.sigmoid(np.dot(X, self.theta)));
+        y_pred = np.round(utils.sigmoid(X.dot(self.theta)));
         
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -210,8 +210,8 @@ class RegLogisticRegressor:
         # Compute the loss function for regularized logistic regression          #
         # TODO: 1-2 lines of code expected                                       #
         ##########################################################################
-        h = utils.sigmoid(np.dot(X, theta));
-        J = np.mean(-y*np.log(h) - (1-y)*np.log(1-h)) + reg*(np.dot(theta, theta) - theta[0]**2) / (2*m)
+        h = utils.sigmoid(X.dot(theta));
+        J = np.mean(-y*np.log(h) - (1-y)*np.log(1-h)) + reg*(theta.dot(theta) - theta[0]**2) / (2*m)
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -233,7 +233,6 @@ class RegLogisticRegressor:
         - gradient with respect to self.theta; an array of the same shape as theta
         """
         theta,X,y,reg = args
-        print 'shape of theta is ', theta.shape
         m,dim = X.shape
         grad = np.zeros((dim,))
         ##########################################################################
@@ -241,7 +240,7 @@ class RegLogisticRegressor:
         # regression                                                             #
         # TODO: 1 line of code expected                                          #
         ##########################################################################
-        grad = (np.dot((utils.sigmoid(np.dot(X, theta)) - y), X) + reg*theta*np.hstack([0, np.ones(dim-1)])) / m
+        grad = ((utils.sigmoid(X.dot(theta)) - y).dot(X) + reg*theta*np.hstack([0, np.ones(dim-1)])) / m
 
         ###########################################################################
         #                           END OF YOUR CODE                              #
@@ -268,7 +267,7 @@ class RegLogisticRegressor:
         # TODO: 1 line of code expected                                           #
         #                                                                         #
         ###########################################################################
-        y_pred = np.round(utils.sigmoid(np.dot(X, self.theta)));
+        y_pred = np.round(utils.sigmoid(X.dot(self.theta)));
 
         ###########################################################################
         #                           END OF YOUR CODE                              #

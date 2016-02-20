@@ -86,7 +86,7 @@ print "Accuracy on the training set = ", accuracy
 ##################################################################
 ## Underfit and overfit models                                  ##
 ##################################################################
-reg_under = 10
+reg_under = 100
 reg_lr_under = RegLogisticRegressor()
 theta_under = reg_lr_under.train(XX,y,reg=reg_under,num_iters=1000,norm=False)
 plot_utils.plot_decision_boundary_poly(X,y,theta_under,reg_under,p,'Chip Test 1','Chip Test 2',['y = 0','y = 1'])
