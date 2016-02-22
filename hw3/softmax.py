@@ -150,16 +150,13 @@ def softmax_loss_naive(theta, X, y, reg):
   # the regularization term!                                                  #
   #############################################################################
   # Hint: about 5-10 lines of code expected
-  for i in np.arange(m):
-    J -= np.log(np.exp(X[i,:].dot(theta[:,y[i]])) / np.sum(np.exp(X[i,:].dot(theta))))
   
-  ## Normalize and regularize loss
-  J = (J  + reg * np.sum(theta**2)) / float(m)
-  
-  ## Gradient
-  for i in np.arange(m):
-    for k in np.arange(K):
-      grad[:,k] -= X[i,:] * ((y[i] == k) - np.exp(X[i,:].dot(theta[:,k])) / np.sum(np.exp(X[i,:].dot(theta)))) / float(m)
+  for i in range(0, m):
+    for j in range(0, theta.shape[1]):
+      J -= int(y[i] == j)*np.log(np.exp(theta[:,j].dot(X[i])) / np.sum(np.exp(theta.T.dot(X[i])))) / m
+      grad[:,j] -= (X[i]*(int(y[i] == j)- np.exp(theta[:,j].dot(X[i])) / np.sum(np.exp(theta.T.dot(X[i]))))) / m
+  J += reg * np.sum(theta * theta) / 2 / m
+  grad += reg * theta / m
 
 
   #############################################################################
