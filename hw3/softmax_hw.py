@@ -30,7 +30,7 @@ sys.stdout.flush()
 
 from gradient_check import grad_check_sparse
 f = lambda th: softmax_loss_naive(th, X_train, y_train, 0.0)[0]
-grad_numerical = grad_check_sparse(f, theta, grad, 10)
+#grad_numerical = grad_check_sparse(f, theta, grad, 10)
 sys.stdout.flush()
 
 # Now that we have a naive implementation of the softmax loss function and its gradient,
@@ -68,7 +68,7 @@ results = {}
 best_val = -1
 best_softmax = None
 learning_rates = [1e-7, 5e-7, 1e-6, 5e-6]
-regularization_strengths = [5e4, 1e5, 5e5, 1e8]
+regularization_strengths = [0.5, 0.1, 0.05, 0.01, 0.005, 0.001]#[5e4, 1e5, 5e5, 1e8]
 
 ################################################################################
 # TODO:                                                                        #
@@ -77,10 +77,17 @@ regularization_strengths = [5e4, 1e5, 5e5, 1e8]
 # Hint: about 10 lines of code expected
 ################################################################################
 
-classifier = SoftmaxClassifier()
-for learn_rate in learning_rates:
-  for reg_strength in regularization_strengths:
-    classifier.train(X_train, y_train, learnin_rate=learn_rate, reg=reg_strength)
+for lr in learning_rates:
+  for reg in regularization_strengths:
+    classifier = SoftmaxClassifier()
+    accuracy = lambda x,y: np.mean(classifier.predict(x) == y)
+    classifier.train(X_train, y_train, learning_rate=lr, reg=reg)
+    cvaccuracy = accuracy(X_val, y_val)
+    results[(lr, reg)] = (accuracy(X_train, y_train), cvaccuracy)
+    
+    if (cvaccuracy > best_val):
+      best_softmax = classifier
+      best_val = cvaccuracy
 
 ################################################################################
 #                              END OF YOUR CODE                                #

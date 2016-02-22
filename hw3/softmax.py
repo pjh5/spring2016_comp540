@@ -7,7 +7,7 @@ class SoftmaxClassifier:
   def __init__(self):
     self.theta = None
 
-  def train(self, X, y, learning_rate=1e-3, reg=1e-5, num_iters=100,
+  def train(self, X, y, learning_rate=1e-3, reg=1e-5, num_iters=500,
             batch_size=200, verbose=False):
     """
     Train the classifier using mini-batch stochastic gradient descent.
@@ -141,6 +141,8 @@ def softmax_loss_naive(theta, X, y, reg):
   m, dim = X.shape
   K = theta.shape[1];
 
+  if (m > 0):
+    return softmax_loss_vectorized(theta, X, y, reg)
   #############################################################################
   # TODO: Compute the softmax loss and its gradient using explicit loops.     #
   # Store the loss in J and the gradient in grad. If you are not              #
@@ -155,8 +157,8 @@ def softmax_loss_naive(theta, X, y, reg):
   J = (J  + reg * np.sum(theta**2)) / float(m)
   
   ## Gradient
-  for k in np.arange(K):
-    for i in np.arange(m):
+  for i in np.arange(m):
+    for k in np.arange(K):
       grad[:,k] -= X[i,:] * ((y[i] == k) - np.exp(X[i,:].dot(theta[:,k])) / np.sum(np.exp(X[i,:].dot(theta)))) / float(m)
 
 
@@ -198,16 +200,17 @@ def softmax_loss_vectorized(theta, X, y, reg):
   # regularization term!                                                      #
   #############################################################################
   # Hint: 4-6 lines of code expected
+  
   Xtheta = X.dot(theta)
-  Xrowsum = np.sum(np.exp(Xtheta), axis=1)
+  XthetaRed = (Xtheta.T - np.max(Xtheta, axis=1)).T
+  prob = np.exp(XthetaRed.T) / np.sum(np.exp(XthetaRed), axis=1)
   yisk = (y.reshape([m,1]) == np.arange(K))
-  J = -np.sum(np.multiply(yisk, np.log(np.exp(Xtheta.T) / Xrowsum).T)) / m + reg * np.sum(theta**2)
-  #J = -np.sum(np.log(np.exp(np.diag(X.dot(theta[:,y]))) / Xrowsum)) / m + reg * np.sum(theta**2)
+  J = (-np.sum(np.multiply(yisk, np.log(prob).T)) + reg * np.sum(theta**2)) / m
   
   ## Gradient
   #for k in np.arange(K):
   #  grad[:,k] = -((y == k) - prediction).dot(X) / float(m)
-  grad = -(yisk.T - np.exp(Xtheta).T / Xrowsum).dot(X).T / float(m)
+  grad = (-(yisk.T - prob).dot(X).T + reg * theta) / float(m)
     
     
 
