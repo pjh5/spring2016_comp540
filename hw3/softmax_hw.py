@@ -5,6 +5,7 @@ import utils
 from softmax import softmax_loss_naive, softmax_loss_vectorized
 from softmax import SoftmaxClassifier
 import time
+import sys
 
 # Get the CIFAR-10 data broken up into train, validation and test sets
 
@@ -22,6 +23,7 @@ loss, grad = softmax_loss_naive(theta, X_train, y_train, 0.0)
 # Loss should be something close to - log(0.1)
 
 print 'loss:', loss, ' should be close to ', - np.log(0.1)
+sys.stdout.flush()
 
 # Use numeric gradient checking as a debugging tool.
 # The numeric gradient should be close to the analytic gradient. (within 1e-7)
@@ -29,6 +31,7 @@ print 'loss:', loss, ' should be close to ', - np.log(0.1)
 from gradient_check import grad_check_sparse
 f = lambda th: softmax_loss_naive(th, X_train, y_train, 0.0)[0]
 grad_numerical = grad_check_sparse(f, theta, grad, 10)
+sys.stdout.flush()
 
 # Now that we have a naive implementation of the softmax loss function and its gradient,
 # implement a vectorized version in softmax_loss_vectorized.
@@ -39,11 +42,13 @@ tic = time.time()
 loss_naive, grad_naive = softmax_loss_naive(theta, X_train, y_train, 0.00001)
 toc = time.time()
 print 'naive loss: %e computed in %fs' % (loss_naive, toc - tic)
+sys.stdout.flush()
 
 tic = time.time()
 loss_vectorized, grad_vectorized = softmax_loss_vectorized(theta, X_train, y_train, 0.00001)
 toc = time.time()
 print 'vectorized loss: %e computed in %fs' % (loss_vectorized, toc - tic)
+sys.stdout.flush()
 
 
 # We use the Frobenius norm to compare the two versions
@@ -52,6 +57,7 @@ print 'vectorized loss: %e computed in %fs' % (loss_vectorized, toc - tic)
 grad_difference = np.linalg.norm(grad_naive - grad_vectorized, ord='fro')
 print 'Loss difference: %f' % np.abs(loss_naive - loss_vectorized)
 print 'Gradient difference: %f' % grad_difference
+sys.stdout.flush()
 
 # Use the validation set to tune hyperparameters (regularization strength and
 # learning rate). You should experiment with different ranges for the learning
@@ -71,7 +77,10 @@ regularization_strengths = [5e4, 1e5, 5e5, 1e8]
 # Hint: about 10 lines of code expected
 ################################################################################
 
-
+classifier = SoftmaxClassifier()
+for learn_rate in learning_rates:
+  for reg_strength in regularization_strengths:
+    classifier.train(X_train, y_train, learnin_rate=learn_rate, reg=reg_strength)
 
 ################################################################################
 #                              END OF YOUR CODE                                #

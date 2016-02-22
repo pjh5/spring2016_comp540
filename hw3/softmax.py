@@ -47,7 +47,9 @@ class SoftmaxClassifier:
       # replacement is faster than sampling without replacement.              #
       #########################################################################
       # Hint: 3 lines of code expected
-
+      idx = np.random.choice(num_train, batch_size)
+      X_batch = X[idx, :]
+      y_batch = y[idx]
 
 
       #########################################################################
@@ -64,7 +66,7 @@ class SoftmaxClassifier:
       # Update the weights using the gradient and the learning rate.          #
       #########################################################################
       # Hint: 1 line of code expected
-
+      self.theta -= reg * grad
 
       #########################################################################
       #                       END OF YOUR CODE                                #
@@ -94,7 +96,7 @@ class SoftmaxClassifier:
     # Implement this method. Store the predicted labels in y_pred.            #
     ###########################################################################
     # Hint: 1 line of code expected
-
+    y_pred = np.argmax(X.dot(self.theta), axis=1)
 
     ###########################################################################
     #                           END OF YOUR CODE                              #
@@ -137,6 +139,7 @@ def softmax_loss_naive(theta, X, y, reg):
   J = 0.0
   grad = np.zeros_like(theta)
   m, dim = X.shape
+  K = theta.shape[1];
 
   #############################################################################
   # TODO: Compute the softmax loss and its gradient using explicit loops.     #
@@ -145,7 +148,16 @@ def softmax_loss_naive(theta, X, y, reg):
   # the regularization term!                                                  #
   #############################################################################
   # Hint: about 5-10 lines of code expected
-
+  for i in np.arange(m):
+    J -= np.log(np.exp(X[i,:].dot(theta[:,y[i]])) / np.sum(np.exp(X[i,:].dot(theta))))
+  
+  ## Normalize and regularize loss
+  J = (J  + reg * np.sum(theta**2)) / float(m)
+  
+  ## Gradient
+  for k in np.arange(K):
+    for i in np.arange(m):
+      grad[:,k] -= X[i,:] * ((y[i] == k) - np.exp(X[i,:].dot(theta[:,k])) / np.sum(np.exp(X[i,:].dot(theta)))) / float(m)
 
 
   #############################################################################
@@ -177,6 +189,7 @@ def softmax_loss_vectorized(theta, X, y, reg):
   J = 0.0
   grad = np.zeros_like(theta)
   m, dim = X.shape
+  K = theta.shape[1];
 
   #############################################################################
   # TODO: Compute the softmax loss and its gradient using no explicit loops.  #
@@ -185,6 +198,18 @@ def softmax_loss_vectorized(theta, X, y, reg):
   # regularization term!                                                      #
   #############################################################################
   # Hint: 4-6 lines of code expected
+  Xtheta = X.dot(theta)
+  Xrowsum = np.sum(np.exp(Xtheta), axis=1)
+  yisk = (y.reshape([m,1]) == np.arange(K))
+  J = -np.sum(np.multiply(yisk, np.log(np.exp(Xtheta.T) / Xrowsum).T)) / m + reg * np.sum(theta**2)
+  #J = -np.sum(np.log(np.exp(np.diag(X.dot(theta[:,y]))) / Xrowsum)) / m + reg * np.sum(theta**2)
+  
+  ## Gradient
+  #for k in np.arange(K):
+  #  grad[:,k] = -((y == k) - prediction).dot(X) / float(m)
+  grad = -(yisk.T - np.exp(Xtheta).T / Xrowsum).dot(X).T / float(m)
+    
+    
 
 
   #############################################################################
