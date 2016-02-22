@@ -34,7 +34,7 @@ classifier = SoftmaxClassifier()
 accuracy = lambda x,y: np.mean(classifier.predict(x) == y)
 for lr in learning_rates:
   for reg in regularization_strengths:
-    classifier.train(X_train, y_train, learning_rate=lr, reg=reg, num_iters=6000, batch_size=y_train.size/2)
+    classifier.train(X_train, y_train, learning_rate=lr, reg=reg, num_iters=10000, batch_size=y_train.size/4)
     val_accuracy = accuracy(X_val, y_val)
     train_accuracy = accuracy(X_train, y_train)
     results[(lr, reg)] = (train_accuracy, val_accuracy)

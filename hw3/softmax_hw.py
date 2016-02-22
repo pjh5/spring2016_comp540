@@ -18,18 +18,18 @@ X_train, y_train, X_val, y_val, X_test, y_test = utils.get_CIFAR10_data()
 # Generate a random softmax theta matrix and use it to compute the loss.
 
 theta = np.random.randn(3073,10) * 0.0001
-#loss, grad = softmax_loss_naive(theta, X_train, y_train, 0.0)
+loss, grad = softmax_loss_naive(theta, X_train, y_train, 0.0)
 
 # Loss should be something close to - log(0.1)
 
-#print 'loss:', loss, ' should be close to ', - np.log(0.1)
+print 'loss:', loss, ' should be close to ', - np.log(0.1)
 
 # Use numeric gradient checking as a debugging tool.
 # The numeric gradient should be close to the analytic gradient. (within 1e-7)
 
 from gradient_check import grad_check_sparse
 f = lambda th: softmax_loss_naive(th, X_train, y_train, 0.0)[0]
-#grad_numerical = grad_check_sparse(f, theta, grad, 10)
+grad_numerical = grad_check_sparse(f, theta, grad, 10)
 
 # Now that we have a naive implementation of the softmax loss function and its gradient,
 # implement a vectorized version in softmax_loss_vectorized.
@@ -37,22 +37,22 @@ f = lambda th: softmax_loss_naive(th, X_train, y_train, 0.0)[0]
 # much faster.
 
 tic = time.time()
-#loss_naive, grad_naive = softmax_loss_naive(theta, X_train, y_train, 0.00001)
+loss_naive, grad_naive = softmax_loss_naive(theta, X_train, y_train, 0.00001)
 toc = time.time()
-#print 'naive loss: %e computed in %fs' % (loss_naive, toc - tic)
+print 'naive loss: %e computed in %fs' % (loss_naive, toc - tic)
 
 tic = time.time()
-#loss_vectorized, grad_vectorized = softmax_loss_vectorized(theta, X_train, y_train, 0.00001)
+loss_vectorized, grad_vectorized = softmax_loss_vectorized(theta, X_train, y_train, 0.00001)
 toc = time.time()
-#print 'vectorized loss: %e computed in %fs' % (loss_vectorized, toc - tic)
+print 'vectorized loss: %e computed in %fs' % (loss_vectorized, toc - tic)
 
 
 # We use the Frobenius norm to compare the two versions
 # of the gradient.
 
-#grad_difference = np.linalg.norm(grad_naive - grad_vectorized, ord='fro')
-#print 'Loss difference: %f' % np.abs(loss_naive - loss_vectorized)
-#print 'Gradient difference: %f' % grad_difference
+grad_difference = np.linalg.norm(grad_naive - grad_vectorized, ord='fro')
+print 'Loss difference: %f' % np.abs(loss_naive - loss_vectorized)
+print 'Gradient difference: %f' % grad_difference
 
 # Use the validation set to tune hyperparameters (regularization strength and
 # learning rate). You should experiment with different ranges for the learning
@@ -62,8 +62,8 @@ toc = time.time()
 results = {}
 best_val = -1
 best_softmax = SoftmaxClassifier()
-learning_rates = [2e-6]
-regularization_strengths = [1e-2]
+learning_rates = [2e-6]#[1e-5, 2e-6, 12-7]
+regularization_strengths = [0.01]#[.1, .01, .05, .005]
 
 ################################################################################
 # TODO:                                                                        #

@@ -2,6 +2,7 @@ import numpy as np
 from random import shuffle
 import scipy.sparse
 
+
 class SoftmaxClassifier:
 
   def __init__(self):
@@ -31,9 +32,9 @@ class SoftmaxClassifier:
 
     # Run stochastic gradient descent to optimize theta
     loss_history = []
-    for it in xrange(num_iters):
-      X_batch = None
-      y_batch = None
+    for it in range(num_iters):
+      X_batch = np.zeros(batch_size)
+      y_batch = np.zeros(batch_size)
 
       #########################################################################
       # TODO:                                                                 #
@@ -47,10 +48,10 @@ class SoftmaxClassifier:
       # replacement is faster than sampling without replacement.              #
       #########################################################################
       # Hint: 3 lines of code expected
-      idx = np.random.choice(num_train, batch_size)
-      X_batch = X[idx, :]
-      y_batch = y[idx]
 
+      ind = np.random.randint(0, num_train, batch_size)
+      X_batch = X[ind,:]
+      y_batch = y[ind]
 
       #########################################################################
       #                       END OF YOUR CODE                                #
@@ -66,14 +67,15 @@ class SoftmaxClassifier:
       # Update the weights using the gradient and the learning rate.          #
       #########################################################################
       # Hint: 1 line of code expected
-      self.theta -= reg * grad
+
+      self.theta = self.theta - grad * learning_rate
 
       #########################################################################
       #                       END OF YOUR CODE                                #
       #########################################################################
 
-      if verbose and it % 100 == 0:
-        print 'iteration %d / %d: loss %f' % (it, num_iters, loss)
+      if verbose and it % 10 == 0:
+        print ('iteration %d / %d: loss %f' % (it, num_iters, loss))
 
     return loss_history
 
@@ -96,7 +98,8 @@ class SoftmaxClassifier:
     # Implement this method. Store the predicted labels in y_pred.            #
     ###########################################################################
     # Hint: 1 line of code expected
-    y_pred = np.argmax(X.dot(self.theta), axis=1)
+
+    y_pred = np.argmax(X.dot(self.theta),axis=1)
 
     ###########################################################################
     #                           END OF YOUR CODE                              #
@@ -122,7 +125,6 @@ class SoftmaxClassifier:
 
   
 def softmax_loss_naive(theta, X, y, reg):
-  return softmax_loss_vectorized(theta, X, y, reg)
   """
   Softmax loss function, naive implementation (with loops)
   Inputs:
@@ -141,7 +143,6 @@ def softmax_loss_naive(theta, X, y, reg):
   grad = np.zeros_like(theta)
   m, dim = X.shape
   K = theta.shape[1];
-  
   #############################################################################
   # TODO: Compute the softmax loss and its gradient using explicit loops.     #
   # Store the loss in J and the gradient in grad. If you are not              #
@@ -156,7 +157,6 @@ def softmax_loss_naive(theta, X, y, reg):
       grad[:,j] -= (X[i]*(int(y[i] == j)- np.exp(theta[:,j].dot(X[i])) / np.sum(np.exp(theta.T.dot(X[i]))))) / m
   J += reg * np.sum(theta * theta) / 2 / m
   grad += reg * theta / m
-
 
   #############################################################################
   #                          END OF YOUR CODE                                 #
@@ -187,7 +187,6 @@ def softmax_loss_vectorized(theta, X, y, reg):
   J = 0.0
   grad = np.zeros_like(theta)
   m, dim = X.shape
-  K = theta.shape[1];
 
   #############################################################################
   # TODO: Compute the softmax loss and its gradient using no explicit loops.  #
@@ -196,20 +195,15 @@ def softmax_loss_vectorized(theta, X, y, reg):
   # regularization term!                                                      #
   #############################################################################
   # Hint: 4-6 lines of code expected
-  
+
+  #J = -np.sum(np.multiply((y.reshape([m,1]) == np.arange(theta.shape[1])), np.log(np.exp((X.dot(theta)).T) / np.sum(np.exp(X.dot(theta)), axis=1)).T)) / float(m) + reg * np.sum(theta**2) / 2 / float(m)
+  #grad = -((y.reshape([m,1]) == np.arange(theta.shape[1])).T - np.exp(X.dot(theta)).T / np.sum(np.exp(X.dot(theta)), axis=1)).dot(X).T / float(m) + reg * np.sum(theta) / float(m)
   Xtheta = X.dot(theta)
   XthetaRed = (Xtheta.T - np.max(Xtheta, axis=1)).T
   prob = np.exp(XthetaRed.T) / np.sum(np.exp(XthetaRed), axis=1)
-  yisk = (y.reshape([m,1]) == np.arange(K))
-  J = (-np.sum(np.multiply(yisk, np.log(prob).T)) + reg * np.sum((theta / np.sqrt(2))**2)) / m
-  #J = (-np.sum(np.multiply(yisk, np.log(prob).T)) / m + reg * np.sum(theta**2))
-  
-  ## Gradient
+  yisk = (y.reshape([m,1]) == np.arange(theta.shape[1]))
+  J = (-np.sum(np.multiply(yisk, np.log(prob).T)) + reg * np.sum(theta**2) / 2 ) / m
   grad = (-(yisk.T - prob).dot(X).T + reg * theta) / float(m)
-  #grad = (-(yisk.T - prob).dot(X).T) / float(m)
-    
-    
-
 
   #############################################################################
   #                          END OF YOUR CODE                                 #
