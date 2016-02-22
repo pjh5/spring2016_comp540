@@ -7,8 +7,8 @@ class SoftmaxClassifier:
   def __init__(self):
     self.theta = None
 
-  def train(self, X, y, learning_rate=1e-3, reg=1e-5, num_iters=300,
-            batch_size=3000, verbose=False):
+  def train(self, X, y, learning_rate=1e-3, reg=1e-5, num_iters=4000,
+            batch_size=400, verbose=False):
     """
     Train the classifier using mini-batch stochastic gradient descent.
 
@@ -122,6 +122,7 @@ class SoftmaxClassifier:
 
   
 def softmax_loss_naive(theta, X, y, reg):
+  return softmax_loss_vectorized(theta, X, y, reg)
   """
   Softmax loss function, naive implementation (with loops)
   Inputs:
@@ -140,9 +141,7 @@ def softmax_loss_naive(theta, X, y, reg):
   grad = np.zeros_like(theta)
   m, dim = X.shape
   K = theta.shape[1];
-
-  if (m > 0):
-    return softmax_loss_vectorized(theta, X, y, reg)
+  
   #############################################################################
   # TODO: Compute the softmax loss and its gradient using explicit loops.     #
   # Store the loss in J and the gradient in grad. If you are not              #
@@ -152,7 +151,7 @@ def softmax_loss_naive(theta, X, y, reg):
   # Hint: about 5-10 lines of code expected
   
   for i in range(0, m):
-    for j in range(0, theta.shape[1]):
+    for j in range(0, K):
       J -= int(y[i] == j)*np.log(np.exp(theta[:,j].dot(X[i])) / np.sum(np.exp(theta.T.dot(X[i])))) / m
       grad[:,j] -= (X[i]*(int(y[i] == j)- np.exp(theta[:,j].dot(X[i])) / np.sum(np.exp(theta.T.dot(X[i]))))) / m
   J += reg * np.sum(theta * theta) / 2 / m
@@ -202,12 +201,12 @@ def softmax_loss_vectorized(theta, X, y, reg):
   XthetaRed = (Xtheta.T - np.max(Xtheta, axis=1)).T
   prob = np.exp(XthetaRed.T) / np.sum(np.exp(XthetaRed), axis=1)
   yisk = (y.reshape([m,1]) == np.arange(K))
-  J = (-np.sum(np.multiply(yisk, np.log(prob).T)) + reg * np.sum(theta**2)) / m
+  J = (-np.sum(np.multiply(yisk, np.log(prob).T)) + reg * np.sum((theta / np.sqrt(2))**2)) / m
+  #J = (-np.sum(np.multiply(yisk, np.log(prob).T)) / m + reg * np.sum(theta**2))
   
   ## Gradient
-  #for k in np.arange(K):
-  #  grad[:,k] = -((y == k) - prediction).dot(X) / float(m)
   grad = (-(yisk.T - prob).dot(X).T + reg * theta) / float(m)
+  #grad = (-(yisk.T - prob).dot(X).T) / float(m)
     
     
 

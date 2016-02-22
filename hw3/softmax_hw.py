@@ -18,12 +18,11 @@ X_train, y_train, X_val, y_val, X_test, y_test = utils.get_CIFAR10_data()
 # Generate a random softmax theta matrix and use it to compute the loss.
 
 theta = np.random.randn(3073,10) * 0.0001
-loss, grad = softmax_loss_naive(theta, X_train, y_train, 0.0)
+#loss, grad = softmax_loss_naive(theta, X_train, y_train, 0.0)
 
 # Loss should be something close to - log(0.1)
 
-print 'loss:', loss, ' should be close to ', - np.log(0.1)
-sys.stdout.flush()
+#print 'loss:', loss, ' should be close to ', - np.log(0.1)
 
 # Use numeric gradient checking as a debugging tool.
 # The numeric gradient should be close to the analytic gradient. (within 1e-7)
@@ -31,7 +30,6 @@ sys.stdout.flush()
 from gradient_check import grad_check_sparse
 f = lambda th: softmax_loss_naive(th, X_train, y_train, 0.0)[0]
 #grad_numerical = grad_check_sparse(f, theta, grad, 10)
-sys.stdout.flush()
 
 # Now that we have a naive implementation of the softmax loss function and its gradient,
 # implement a vectorized version in softmax_loss_vectorized.
@@ -39,25 +37,22 @@ sys.stdout.flush()
 # much faster.
 
 tic = time.time()
-loss_naive, grad_naive = softmax_loss_naive(theta, X_train, y_train, 0.00001)
+#loss_naive, grad_naive = softmax_loss_naive(theta, X_train, y_train, 0.00001)
 toc = time.time()
-print 'naive loss: %e computed in %fs' % (loss_naive, toc - tic)
-sys.stdout.flush()
+#print 'naive loss: %e computed in %fs' % (loss_naive, toc - tic)
 
 tic = time.time()
-loss_vectorized, grad_vectorized = softmax_loss_vectorized(theta, X_train, y_train, 0.00001)
+#loss_vectorized, grad_vectorized = softmax_loss_vectorized(theta, X_train, y_train, 0.00001)
 toc = time.time()
-print 'vectorized loss: %e computed in %fs' % (loss_vectorized, toc - tic)
-sys.stdout.flush()
+#print 'vectorized loss: %e computed in %fs' % (loss_vectorized, toc - tic)
 
 
 # We use the Frobenius norm to compare the two versions
 # of the gradient.
 
-grad_difference = np.linalg.norm(grad_naive - grad_vectorized, ord='fro')
-print 'Loss difference: %f' % np.abs(loss_naive - loss_vectorized)
-print 'Gradient difference: %f' % grad_difference
-sys.stdout.flush()
+#grad_difference = np.linalg.norm(grad_naive - grad_vectorized, ord='fro')
+#print 'Loss difference: %f' % np.abs(loss_naive - loss_vectorized)
+#print 'Gradient difference: %f' % grad_difference
 
 # Use the validation set to tune hyperparameters (regularization strength and
 # learning rate). You should experiment with different ranges for the learning
@@ -66,9 +61,9 @@ sys.stdout.flush()
 
 results = {}
 best_val = -1
-best_softmax = None
-learning_rates = [1e-7, 5e-7, 1e-6, 5e-6]
-regularization_strengths = [0.5, 0.1, 0.05, 0.01, 0.005, 0.001]#[5e4, 1e5, 5e5, 1e8]
+best_softmax = SoftmaxClassifier()
+learning_rates = [2e-6]
+regularization_strengths = [1e-2]
 
 ################################################################################
 # TODO:                                                                        #
@@ -77,27 +72,25 @@ regularization_strengths = [0.5, 0.1, 0.05, 0.01, 0.005, 0.001]#[5e4, 1e5, 5e5, 
 # Hint: about 10 lines of code expected
 ################################################################################
 
+classifier = SoftmaxClassifier()
+accuracy = lambda x,y: np.mean(classifier.predict(x) == y)
 for lr in learning_rates:
   for reg in regularization_strengths:
-    classifier = SoftmaxClassifier()
-    accuracy = lambda x,y: np.mean(classifier.predict(x) == y)
     classifier.train(X_train, y_train, learning_rate=lr, reg=reg)
-    cvaccuracy = accuracy(X_val, y_val)
-    results[(lr, reg)] = (accuracy(X_train, y_train), cvaccuracy)
+    val_accuracy = accuracy(X_val, y_val)
+    train_accuracy = accuracy(X_train, y_train)
+    results[(lr, reg)] = (train_accuracy, val_accuracy)
     
-    if (cvaccuracy > best_val):
-      best_softmax = classifier
-      best_val = cvaccuracy
+    print 'lr %e reg %e train accuracy: %f val accuracy: %f' % (
+                lr, reg, train_accuracy, val_accuracy)
+    
+    if (val_accuracy > best_val):
+      best_softmax.theta = classifier.theta
+      best_val = val_accuracy
 
 ################################################################################
 #                              END OF YOUR CODE                                #
 ################################################################################
-    
-# Print out results.
-for lr, reg in sorted(results):
-    train_accuracy, val_accuracy = results[(lr, reg)]
-    print 'lr %e reg %e train accuracy: %f val accuracy: %f' % (
-                lr, reg, train_accuracy, val_accuracy)
     
 print 'best validation accuracy achieved during cross-validation: %f' % best_val
 
