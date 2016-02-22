@@ -55,5 +55,8 @@ print 'softmax on raw pixels final test set accuracy: %f' % (test_accuracy, )
 
 
 # TODO: Compare performance against OVA classifier of Homework 2 with the same
-# train, validation and test sets (use sklearn's classifier evaluation metrics)
+# train, validation and test sets (use sklearn's 
+
+ypred = ova_logreg.predict(X_test)
+print confusion_matrix(y_test,ypred)classifier evaluation metrics)
 
