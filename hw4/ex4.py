@@ -72,7 +72,7 @@ for C in [1, 100]:
 
   y_pred = svm.predict(XX)
 
-  print "Accuracy on training data = ", metrics.accuracy_score(yy,y_pred)
+  print "Accuracy on training data (C=", str(C), ") is ", metrics.accuracy_score(yy,y_pred)
 
   # visualize the decision boundary
 
@@ -129,12 +129,12 @@ yy[y == 0] = -1
 svm = LinearSVM_twoclass()
 svm.theta = np.zeros((KK.shape[1],))
 C = 1
-svm.train(KK,yy,learning_rate=1e-4,C=C,num_iters=20000,verbose=True)
+#svm.train(KK,yy,learning_rate=1e-4,C=C,num_iters=20000,verbose=True)
 
 # visualize the boundary
 
-utils.plot_decision_kernel_boundary(X,y,scaler,sigma,svm,'','',['neg','pos'])
-plt.savefig("fig4.pdf")
+#utils.plot_decision_kernel_boundary(X,y,scaler,sigma,svm,'','',['neg','pos'])
+#plt.savefig("fig4.pdf")
 
 ############################################################################
 #  Part  4: Training SVM with a kernel                                     #
@@ -162,8 +162,8 @@ plt.savefig('fig5.pdf')
 # Xval and yval                                                            #
 ############################################################################
 
-Cvals = [0.01,0.03,0.1,0.3,10,30]
-sigma_vals = [0.01,0.03,0.1,0.3,10,30]
+Cvals = [0.01,0.03,0.1,0.3,1,3,10,30]
+sigma_vals = [0.01,0.03,0.1,0.3,1,3,10,30]
 
 best_C = 0.01
 best_sigma = 0.01
@@ -187,14 +187,18 @@ for sigma in sigma_vals:
   scaler = preprocessing.StandardScaler().fit(K)
   scaleK = scaler.transform(K)
   KK = np.vstack([np.ones((scaleK.shape[0],)),scaleK]).T
+  
+  Kval = np.array([utils.gaussian_kernel(x1,x2,sigma) for x1 in Xval for x2 in X]).reshape(Xval.shape[0], X.shape[0])
+  scaleKval = scaler.transform(Kval)
+  KKval = np.vstack([np.ones((scaleKval.shape[0],)),scaleKval.T]).T
 
   for C in Cvals:
     print "sigma=", sigma, ", C=", C
     svm.theta = np.zeros((KK.shape[1],))
     svm.train(KK,yy,learning_rate=1e-4,C=C,num_iters=20000)
     
-    y_pred = svm.predict(Xval)
-    acc = metrics.accuracy_score(yval,y_pred)
+    y_pred = svm.predict(KKval)
+    acc = metrics.accuracy_score(yyval,y_pred)
     
     if (acc > best_acc):
       best_acc = acc
