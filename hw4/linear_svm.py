@@ -24,7 +24,9 @@ def svm_loss_twoclass(theta, X, y, C):
   # Compute loss J and gradient of J with respect to theta             #
   # 2-3 lines of code expected                                         #
   ######################################################################
-
+  yhx = y * X.dot(theta)
+  J = np.mean(theta**2)/d + C*np.mean(np.maximum(1 - yhx, np.zeros([m,1])))
+  grad = np.sum(theta / m - C*(yhx < 1)*np.mean(y*X, axis=0).T)
 
   ######################################################################
   # end of your code                                                   #
