@@ -129,12 +129,12 @@ yy[y == 0] = -1
 svm = LinearSVM_twoclass()
 svm.theta = np.zeros((KK.shape[1],))
 C = 1
-#svm.train(KK,yy,learning_rate=1e-4,C=C,num_iters=20000,verbose=True)
+svm.train(KK,yy,learning_rate=1e-4,C=C,num_iters=20000,verbose=True)
 
 # visualize the boundary
 
-#utils.plot_decision_kernel_boundary(X,y,scaler,sigma,svm,'','',['neg','pos'])
-#plt.savefig("fig4.pdf")
+utils.plot_decision_kernel_boundary(X,y,scaler,sigma,svm,'','',['neg','pos'])
+plt.savefig("fig4.pdf")
 
 ############################################################################
 #  Part  4: Training SVM with a kernel                                     #
@@ -204,6 +204,7 @@ for sigma in sigma_vals:
       best_acc = acc
       best_C = C
       best_sigma = sigma
+print "Best C is ", best_C, ", best sigma is ", best_sigma
 
 ############################################################################
 #   end of your code                                                       #
