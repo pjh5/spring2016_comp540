@@ -2,6 +2,7 @@ import numpy as np
 import linear_svm
 import matplotlib.pyplot as plt
 import utils
+import random
 from sklearn import preprocessing, metrics
 from linear_classifier import LinearSVM_twoclass
 
@@ -15,7 +16,7 @@ from linear_classifier import LinearSVM_twoclass
 # load ex6data1.mat
 
 X,y = utils.load_mat('data/ex4data1.mat')
-y = np.uint8(y)
+y = np.int8(y)
 y[y == 0] = -1
 
 utils.plot_twoclass_data(X,y,'x1', 'x2',['neg','pos'])
@@ -65,7 +66,7 @@ for C in [1, 100]:
 
   svm = LinearSVM_twoclass()
   svm.theta = np.zeros((XX.shape[1],))
-  svm.train(XX,yy,learning_rate=1e-4,C=C,num_iters=50000,verbose=True)
+  svm.train(XX,yy,learning_rate=1e-4,C=C,num_iters=50000)
 
   # classify the training data
 
@@ -78,19 +79,18 @@ for C in [1, 100]:
   utils.plot_decision_boundary(scaleX,y,svm,'x1','x2',['neg','pos'])
   plt.savefig('fig2_' + str(C) + '.pdf')
 
-  ############################################################################
-  #  Part  3: Training SVM with a kernel                                     #
-  #  We train an SVM with an RBF kernel on the data set and the plot the     #
-  #  learned decision boundary                                               #
-  ############################################################################
+############################################################################
+#  Part  3: Training SVM with a kernel                                     #
+#  We train an SVM with an RBF kernel on the data set and the plot the     #
+#  learned decision boundary                                               #
+############################################################################
 
-  # test your Gaussian kernel implementation
+# test your Gaussian kernel implementation
 
-  x1 = np.array([1,2,1])
-  x2 = np.array([0,4,-1])
-  sigma = 2
+x1 = np.array([1,2,1])
+x2 = np.array([0,4,-1])
+sigma = 2
 
-exit();
 print "Guassian kernel value (should be around 0.324652) = ", utils.gaussian_kernel(x1,x2,sigma)
 
 # load ex4data2.mat
@@ -180,6 +180,26 @@ best_sigma = 0.01
 # your code should determine best_C and best_sigma                         #
 ############################################################################
 
+best_acc = 0;
+svm = LinearSVM_twoclass()
+for sigma in sigma_vals:
+  K = np.array([utils.gaussian_kernel(x1,x2,sigma) for x1 in X for x2 in X]).reshape(X.shape[0],X.shape[0])
+  scaler = preprocessing.StandardScaler().fit(K)
+  scaleK = scaler.transform(K)
+  KK = np.vstack([np.ones((scaleK.shape[0],)),scaleK]).T
+
+  for C in Cvals:
+    print "sigma=", sigma, ", C=", C
+    svm.theta = np.zeros((KK.shape[1],))
+    svm.train(KK,yy,learning_rate=1e-4,C=C,num_iters=20000)
+    
+    y_pred = svm.predict(Xval)
+    acc = metrics.accuracy_score(yval,y_pred)
+    
+    if (acc > best_acc):
+      best_acc = acc
+      best_C = C
+      best_sigma = sigma
 
 ############################################################################
 #   end of your code                                                       #

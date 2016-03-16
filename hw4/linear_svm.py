@@ -26,7 +26,7 @@ def svm_loss_twoclass(theta, X, y, C):
   ######################################################################
   yhx = np.multiply(y, X.dot(theta))
   J = np.mean(theta**2)/d + C*np.mean(np.maximum(1 - yhx, np.zeros([m,1])))
-  grad = (theta - C*np.sum(np.multiply(y[np.newaxis].T, X), axis=0)/m * np.sum(yhx < 1, axis=0)) / m
+  grad = theta - C*(y*(yhx < 1)).dot(X) / m
 
   ######################################################################
   # end of your code                                                   #
