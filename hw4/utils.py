@@ -16,7 +16,7 @@ def gaussian_kernel(x1,x2,sigma):
     # Compute Gaussian kernel                                             #
     # 1 line of code expected                                             #
     #######################################################################
-
+    k = np.exp(-np.linalg.norm(x1-x2)**2/(2*sigma**2))
 
     #######################################################################
     #  end of code                                                        #

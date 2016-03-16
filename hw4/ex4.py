@@ -15,6 +15,8 @@ from linear_classifier import LinearSVM_twoclass
 # load ex6data1.mat
 
 X,y = utils.load_mat('data/ex4data1.mat')
+y = np.uint8(y)
+y[y == 0] = -1
 
 utils.plot_twoclass_data(X,y,'x1', 'x2',['neg','pos'])
 plt.savefig('fig1.pdf')
@@ -57,37 +59,38 @@ yy[y == 0] = -1
 # You will change this line to vary C.                                     #
 ############################################################################
 
-C = 1
+for C in [1, 100]:
 
-############################################################################
+  ############################################################################
 
-svm = LinearSVM_twoclass()
-svm.theta = np.zeros((XX.shape[1],))
-svm.train(XX,yy,learning_rate=1e-4,C=C,num_iters=50000,verbose=True)
+  svm = LinearSVM_twoclass()
+  svm.theta = np.zeros((XX.shape[1],))
+  svm.train(XX,yy,learning_rate=1e-4,C=C,num_iters=50000,verbose=True)
 
-# classify the training data
+  # classify the training data
 
-y_pred = svm.predict(XX)
+  y_pred = svm.predict(XX)
 
-print "Accuracy on training data = ", metrics.accuracy_score(yy,y_pred)
+  print "Accuracy on training data = ", metrics.accuracy_score(yy,y_pred)
 
-# visualize the decision boundary
+  # visualize the decision boundary
 
-utils.plot_decision_boundary(scaleX,y,svm,'x1','x2',['neg','pos'])
-plt.savefig('fig2.pdf')
+  utils.plot_decision_boundary(scaleX,y,svm,'x1','x2',['neg','pos'])
+  plt.savefig('fig2_' + str(C) + '.pdf')
 
-############################################################################
-#  Part  3: Training SVM with a kernel                                     #
-#  We train an SVM with an RBF kernel on the data set and the plot the     #
-#  learned decision boundary                                               #
-############################################################################
+  ############################################################################
+  #  Part  3: Training SVM with a kernel                                     #
+  #  We train an SVM with an RBF kernel on the data set and the plot the     #
+  #  learned decision boundary                                               #
+  ############################################################################
 
-# test your Gaussian kernel implementation
+  # test your Gaussian kernel implementation
 
-x1 = np.array([1,2,1])
-x2 = np.array([0,4,-1])
-sigma = 2
+  x1 = np.array([1,2,1])
+  x2 = np.array([0,4,-1])
+  sigma = 2
 
+exit();
 print "Guassian kernel value (should be around 0.324652) = ", utils.gaussian_kernel(x1,x2,sigma)
 
 # load ex4data2.mat
