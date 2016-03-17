@@ -39,6 +39,10 @@ svm.theta = np.zeros((X.shape[1],))
 Cvals = [0.01,0.03,0.1,0.3,1,3,10,30]
 sigma_vals = [0.01,0.03,0.1,0.3,1,3,10,30]
 
+best_C = 0.01
+best_sigma = 0.01
+
+best_acc = 0;
 for sigma in sigma_vals:
   print "Calculating K"
   sys.stdout.flush()
@@ -55,7 +59,7 @@ for sigma in sigma_vals:
     print "sigma=", sigma, ", C=", C
     sys.stdout.flush()
     svm.theta = np.zeros((KK.shape[1],))
-    svm.train(KK,yy,learning_rate=1e-4,C=C,num_iters=20000)
+    svm.train(KK,yy,learning_rate=1e-4,C=C,num_iters=2000)
     
     y_pred = svm.predict(KKval)
     acc = metrics.accuracy_score(yyval,y_pred)
