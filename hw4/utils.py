@@ -23,6 +23,12 @@ def gaussian_kernel(x1,x2,sigma):
     #######################################################################
 
     return k
+    
+def linear_kernel(x1,x2):
+  return np.linalg.norm(x1-x2)
+
+def dot_product_kernel(x1,x2):
+  return x1.dot(x2)
 
 
 ##########################################################################
@@ -51,7 +57,7 @@ def plot_twoclass_data(X,y,xlabel,ylabel,legend):
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
     ax.set_adjustable('box')
-    X0 = X[np.where(y==0)]
+    X0 = X[np.where(y<=0)]
     X1 = X[np.where(y==1)]
     plt.scatter(X0[:,0],X0[:,1],c='red', s=80, label = legend[0])
     plt.scatter(X1[:,0],X1[:,1],c='green', s = 80, label=legend[1])
