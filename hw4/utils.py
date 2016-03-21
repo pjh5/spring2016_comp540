@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn import preprocessing
+from sklearn.metrics.pairwise import chi2_kernel
+from sklearn.svm import SVC
 
 ##########################################################################
 # Utilities for computing kernels                                        #
@@ -23,7 +25,54 @@ def gaussian_kernel(x1,x2,sigma):
     #######################################################################
 
     return k
+	
+def polynomial_kernel(x1,x2,sigma,d):
+    k = 0
 
+    #######################################################################
+    # TODO                                                                #
+    # Compute Gaussian kernel                                             #
+    # 1 line of code expected                                             #
+    #######################################################################
+    k = (1 + x1.dot(x2)/sigma)**d
+
+    #######################################################################
+    #  end of code                                                        #
+    #######################################################################
+
+    return k
+    
+def chi_kernel(x1,x2,sigma=0.5):
+
+    #######################################################################
+    # TODO                                                                #
+    # Compute Gaussian kernel                                             #
+    # 1 line of code expected                                             #
+    #######################################################################
+    
+    k = chi2_kernel(x1, x2, gamma=sigma)
+
+    #######################################################################
+    #  end of code                                                        #
+    #######################################################################
+
+    return k
+
+def sigmoid_kernel(x1,x2,sigma,tt):
+    k = 0
+
+    #######################################################################
+    # TODO                                                                #
+    # Compute Gaussian kernel                                             #
+    # 1 line of code expected                                             #
+    #######################################################################
+    k = np.tanh(x1.dot(x2)/sigma - tt)
+
+    #######################################################################
+    #  end of code                                                        #
+    #######################################################################
+
+    return k
 
 ##########################################################################
 # Utilities for loading mat files                                        #
@@ -51,7 +100,7 @@ def plot_twoclass_data(X,y,xlabel,ylabel,legend):
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
     ax.set_adjustable('box')
-    X0 = X[np.where(y==0)]
+    X0 = X[np.where(y==-1)]
     X1 = X[np.where(y==1)]
     plt.scatter(X0[:,0],X0[:,1],c='red', s=80, label = legend[0])
     plt.scatter(X1[:,0],X1[:,1],c='green', s = 80, label=legend[1])
