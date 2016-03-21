@@ -106,11 +106,7 @@ def plot_twoclass_data(X,y,xlabel,ylabel,legend):
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
     ax.set_adjustable('box')
-<<<<<<< HEAD
     X0 = X[np.where(y<=0)]
-=======
-    X0 = X[np.where(y==-1)]
->>>>>>> 9c1e7b13a835127477b69825a1e78e6a78e4fc1b
     X1 = X[np.where(y==1)]
     plt.scatter(X0[:,0],X0[:,1],c='red', s=80, label = legend[0])
     plt.scatter(X1[:,0],X1[:,1],c='green', s = 80, label=legend[1])
