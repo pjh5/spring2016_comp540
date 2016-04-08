@@ -66,7 +66,7 @@ correct_out = np.array([[ 1.49834967,  1.70660132,  1.91485297],
                         [ 3.25553199,  3.5141327,   3.77273342]])
 
 # Compare your output with ours. The error should be around 1e-9.
-if out:
+if out.any():
   print 'Testing affine_forward function:'
   print 'difference (should be around 1e-9): ', rel_error(out, correct_out)
 
@@ -294,8 +294,8 @@ for reg in [0.0, 0.7]:
 # the validation set.                                                             #
 ###################################################################################
 
-model = fc_net.TwoLayerNet()
-sgd_solver = None
+model = fc_net.TwoLayerNet(hidden_dim=100)
+sgd_solver = solver.Solver(model, data, update_rule='sgd', optim_config={'learning_rate': 1e-3}, lr_decay=0.95, num_epochs=20, batch_size = 100, print_every=100)
 
 # Problem 3.1.6
 ###################################################################################
@@ -303,7 +303,8 @@ sgd_solver = None
 # 50% accuracy on the validation set.                                             #
 ###################################################################################
 
-pass
+sgd_solver.train()
+
 ##################################################################################
 #                             END OF YOUR CODE                                   #
 ##################################################################################
@@ -323,7 +324,8 @@ if sgd_solver:
   plt.xlabel('Epoch')
   plt.legend(loc='lower right')
   plt.gcf().set_size_inches(15, 12)
-  plt.show()
+  #plt.show()
+  plt.savefig("solver1.pdf")
 
 
 # Problem 3.1.7

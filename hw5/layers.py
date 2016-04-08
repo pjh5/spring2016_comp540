@@ -25,8 +25,10 @@ def affine_forward(x, theta, theta_0):
   # will need to reshape the input into rows.                                 #
   #############################################################################
   # 2 lines of code expected
-
-  pass
+  
+  x1 = x.reshape(x.shape[0], -1)
+  out = np.dot(x1, theta) + theta_0
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -56,8 +58,13 @@ def affine_backward(dout, cache):
   #############################################################################
   # Hint: do not forget to reshape x into (m,d) form
   # 4-5 lines of code expected
-
-  pass
+  
+  x1 = x.reshape(x.shape[0],-1)
+  dx1 = np.dot(dout, theta.T)
+  dx = dx1.reshape(x.shape)
+  dtheta = np.dot(x1.T, dout)
+  dtheta_0 = np.sum(dout, axis = 0)
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -80,8 +87,9 @@ def relu_forward(x):
   # TODO: Implement the ReLU forward pass.                                    #
   #############################################################################
   # 1-2 lines of code expected.
-
-  pass
+  
+  out = np.maximum(0, x)
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -105,8 +113,12 @@ def relu_backward(dout, cache):
   # TODO: Implement the ReLU backward pass.                                   #
   #############################################################################
   # 1-2 lines of code expected. Hint: use np.where
-
-  pass
+  
+  x1 = x
+  x1[x1>0] = 1
+  x1[x1<=0] = 0
+  dx = np.multiply(dout, x1)
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################

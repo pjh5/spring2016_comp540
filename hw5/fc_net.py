@@ -46,7 +46,11 @@ class TwoLayerNet(object):
     ############################################################################
     # 4 lines of code expected
 
-    pass
+    self.params['theta1'] = np.random.randn(input_dim, hidden_dim) * weight_scale
+    self.params['theta1_0'] = np.zeros(hidden_dim)
+    self.params['theta2'] = np.random.randn(hidden_dim, num_classes) * weight_scale
+    self.params['theta2_0'] = np.zeros(num_classes)
+	
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -78,8 +82,12 @@ class TwoLayerNet(object):
     ############################################################################
     # Hint: unpack the weight parameters from self.params
     # 3 lines of code expected
-
-    pass
+    
+    a1, c1 = affine_forward(X, self.params['theta1'], self.params['theta1_0'])
+    a2, c2 = relu_forward(a1)
+    a3, c3 = affine_forward(a2, self.params['theta2'], self.params['theta2_0'])
+    output = a3
+    
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -100,8 +108,18 @@ class TwoLayerNet(object):
     # of 0.5 to simplify the expression for the gradient.                      #
     ############################################################################
     # 8 lines of code expected
-
-    pass
+    
+    loss, d3 = softmax_loss(output, y)
+    loss += self.reg * np.sum(self.params['theta1']**2) / 2
+    loss += self.reg * np.sum(self.params['theta2']**2) / 2
+    
+    d2, grads['theta2'], grads['theta2_0'] = affine_backward(d3, c3)
+    d1 = relu_backward(d2, c2)
+    d0, grads['theta1'], grads['theta1_0'] = affine_backward(d1, c1)
+    
+    grads['theta1'] += self.reg * self.params['theta1']
+    grads['theta2'] += self.reg * self.params['theta2']
+    
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
