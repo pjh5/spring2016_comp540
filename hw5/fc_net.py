@@ -50,7 +50,7 @@ class TwoLayerNet(object):
     self.params['theta1_0'] = np.zeros(hidden_dim)
     self.params['theta2'] = np.random.randn(hidden_dim, num_classes) * weight_scale
     self.params['theta2_0'] = np.zeros(num_classes)
-	
+    
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -164,7 +164,7 @@ class FullyConnectedNet(object):
     self.num_layers = 1 + len(hidden_dims)
     self.dtype = dtype
     self.params = {}
-
+    L = self.num_layers
     ############################################################################
     # TODO: Initialize the parameters of the network, storing all values in    #
     # the self.params dictionary. Store weights and biases for the first layer #
@@ -174,8 +174,15 @@ class FullyConnectedNet(object):
     # initialized to zero.                                                     #
     ############################################################################
     # 7 lines of code expected
-
-    pass
+    
+    self.params['theta1'] = np.random.randn(input_dim, hidden_dims[0]) * weight_scale
+    self.params['theta1_0'] = np.zeros(hidden_dims[0])
+    for i in range(L  - 2):
+      self.params['theta' + str(i + 2)] = np.random.randn(hidden_dims[i], hidden_dims[i + 1]) * weight_scale
+      self.params['theta' + str(i + 2) + '_0'] = np.zeros(hidden_dims[i + 1])
+    self.params['theta' + str(L)] = np.random.randn(hidden_dims[L - 2], num_classes) * weight_scale
+    self.params['theta' + str(L) + '_0'] = np.zeros(num_classes)
+    
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -193,7 +200,7 @@ class FullyConnectedNet(object):
     """
     X = X.astype(self.dtype)
     mode = 'test' if y is None else 'train'
-
+    L = self.num_layers
     output = None
     ############################################################################
     # TODO: Implement the forward pass for the fully-connected net, computing  #
@@ -201,8 +208,16 @@ class FullyConnectedNet(object):
     #                                                                          #
     ############################################################################
     # 6 lines of code expected.
-
-    pass
+    
+    c_aff = {}
+    c_relu = {}
+    a = X
+    for i in range(L):
+      a, c_aff[str(i + 1)] = affine_forward(a, self.params['theta' + str(i + 1)], self.params['theta' + str(i + 1) + '_0'])
+      if i != (L - 1):
+        a, c_relu[str(i + 1)] = relu_forward(a)
+    output = a
+    
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -224,10 +239,15 @@ class FullyConnectedNet(object):
     # of 0.5 to simplify the expression for the gradient.                      #
     ############################################################################
     # 10-12 lines of code expected
-
-
-
-    pass
+    
+    loss, d = softmax_loss(output, y)
+    d, grads['theta' + str(L)], grads['theta' + str(L) + '_0'] = affine_backward(d, c_aff[str(L)])
+    for i in reversed(range(1, L)):
+      loss += self.reg * np.sum(self.params['theta' + str(i)]**2) / 2
+      d = relu_backward(d, c_relu[str(i)])
+      d, grads['theta' + str(i)], grads['theta' + str(i) + '_0'] = affine_backward(d, c_aff[str(i)])
+      grads['theta' + str(i)] += self.reg * self.params['theta' + str(i)]
+    
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################

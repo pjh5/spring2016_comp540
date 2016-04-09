@@ -283,7 +283,7 @@ for reg in [0.0, 0.7]:
     f = lambda _: model.loss(X, y)[0]
     grad_num = eval_numerical_gradient(f, model.params[name], verbose=False)
     print '%s relative error: %.2e' % (name, rel_error(grad_num, grads[name]))
-
+"""
 ###################################################################################
 #   Solver                                                                        #
 ###################################################################################
@@ -327,7 +327,7 @@ if sgd_solver:
   #plt.show()
   plt.savefig("solver1.pdf")
 
-
+"""
 # Problem 3.1.7
 ###################################################################################
 #   Multilayer network                                                            #
@@ -386,7 +386,7 @@ small_data = {
 # TODO: tweak the values of these two parameters
 
 weight_scale = 1e-2
-learning_rate = 1e-4
+learning_rate = 1e-2
 
 model = fc_net.FullyConnectedNet([100, 100],
               weight_scale=weight_scale, dtype=np.float64)
@@ -400,12 +400,14 @@ if model.params != {}:
                 }
          )
   sgd_solver.train()
-
-  plt.plot(sgd_solver.loss_history, '-o')
-  plt.title('Training loss history')
+  plt.plot(sgd_solver.train_acc_history, '-o', label='train')
+  #plt.plot(sgd_solver.loss_history, '-o')
+  #plt.title('Training loss history')
+  plt.title('Training acc history')
   plt.xlabel('Iteration')
-  plt.ylabel('Training loss')
-  plt.show()
+  #plt.ylabel('Training loss')
+  plt.ylabel('Training acc')
+  #plt.show()
 
 # Problem 3.1.9
 ###################################################################################
@@ -426,10 +428,10 @@ small_data = {
 
 
 learning_rate = 1e-3
-weight_scale = 1e-5
+weight_scale = 1e-2
 
 
-model = fc_net.FullyConnectedNet([100, 100, 100, 100],
+model = fc_net.FullyConnectedNet([100, 100, 100],
                 weight_scale=weight_scale, dtype=np.float64)
 
 if model.params != {}:
@@ -442,10 +444,13 @@ if model.params != {}:
          )
   sgd_solver.train()
 
-  plt.plot(sgd_solver.loss_history, '-o')
-  plt.title('Training loss history')
+  plt.plot(sgd_solver.train_acc_history, '-o', label='train')
+  #plt.plot(sgd_solver.loss_history, '-o')
+  #plt.title('Training loss history')
+  plt.title('Training acc history')
   plt.xlabel('Iteration')
-  plt.ylabel('Training loss')
+  #plt.ylabel('Training loss')
+  plt.ylabel('Training acc')
   plt.show()
 
 
