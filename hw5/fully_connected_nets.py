@@ -495,7 +495,7 @@ expected_velocity = np.asarray([
   [ 0.68217895,  0.69633684,  0.71049474,  0.72465263,  0.73881053],
   [ 0.75296842,  0.76712632,  0.78128421,  0.79544211,  0.8096    ]])
 
-if next_theta:
+if next_theta.any():
   print 'next_theta error: ', rel_error(next_theta, expected_next_theta)
   print 'velocity error: ', rel_error(expected_velocity, config['velocity'])
 
@@ -592,7 +592,7 @@ expected_cache = np.asarray([
   [ 0.75037008,  0.7659518,   0.78158892,  0.79728144,  0.81302936],
   [ 0.82883269,  0.84469141,  0.86060554,  0.87657507,  0.8926    ]])
 
-if next_theta:
+if next_theta.any():
   print 'next_theta error: ', rel_error(expected_next_theta, next_theta)
   print 'cache error: ', rel_error(expected_cache, config['cache'])
 

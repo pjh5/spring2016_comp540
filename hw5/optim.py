@@ -66,9 +66,10 @@ def sgd_momentum(theta, dtheta, config=None):
   # the next_theta variable. You should also use and update the velocity v.   #
   #############################################################################
   # 2 lines of code expected
-
-
-  pass
+  
+  v = config['momentum'] * v - config['learning_rate'] * dtheta
+  next_theta = theta + v
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -103,9 +104,10 @@ def rmsprop(theta, dtheta, config=None):
   # stored in config['cache'].                                                #
   #############################################################################
   # 2 lines of code expected
-
-
-  pass
+  
+  config['cache'] = config['cache'] * config['decay_rate'] + (1 - config['decay_rate']) * dtheta * dtheta
+  next_theta = theta - config['learning_rate'] * dtheta / (np.sqrt(config['cache']) + config['epsilon'])
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
