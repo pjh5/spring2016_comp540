@@ -407,7 +407,7 @@ if model.params != {}:
   plt.xlabel('Iteration')
   #plt.ylabel('Training loss')
   plt.ylabel('Training acc')
-  #plt.show()
+  plt.show()
 
 # Problem 3.1.9
 ###################################################################################
@@ -427,11 +427,11 @@ small_data = {
 }
 
 
-learning_rate = 1e-3
-weight_scale = 1e-2
+learning_rate = 2e-5
+weight_scale = 3e-1
 
 
-model = fc_net.FullyConnectedNet([100, 100, 100],
+model = fc_net.FullyConnectedNet([100, 100, 100, 100],
                 weight_scale=weight_scale, dtype=np.float64)
 
 if model.params != {}:

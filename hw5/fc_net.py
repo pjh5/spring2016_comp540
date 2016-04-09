@@ -247,7 +247,11 @@ class FullyConnectedNet(object):
       d = relu_backward(d, c_relu[str(i)])
       d, grads['theta' + str(i)], grads['theta' + str(i) + '_0'] = affine_backward(d, c_aff[str(i)])
       grads['theta' + str(i)] += self.reg * self.params['theta' + str(i)]
-    
+    #print c_aff.keys()
+    #print c_relu.keys()
+    #print grads.keys()
+    #print grads
+    #print self.params.keys()
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
