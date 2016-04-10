@@ -156,8 +156,38 @@ def conv_forward_naive(x, theta, theta0, conv_param):
   # Hint: you can use the function np.pad for padding.                        #
   #############################################################################
   # 14 lines of code expected
-
-  pass
+  
+  m, C, H, W = x.shape
+  K, _, HH, WW = theta.shape
+  s = conv_param['stride']
+  p = conv_param['pad']
+  hi = 1 + (H + 2 * p - HH) / s
+  wi = 1 + (W + 2 * p - WW) / s
+  xp = np.lib.pad(x,((0,0), (0,0), (p,p), (p,p)),'constant',constant_values=0)
+  out = np.zeros((m, K, hi, wi))
+  
+  for i in range(m):
+    for j in range(K):
+      for k in range(hi):
+        for l in range(wi):
+          out[i, j, k ,l] = np.sum(xp[i, :, k*s:k*s+HH, l*s:l*s+WW] * theta[j]) + theta0[j]
+  """
+  for i in range(hi):
+    for j in range(wi):
+      #print "xp", xp.shape
+      #print "theta", theta.shape
+      #print "theta0", theta0.shape
+      #print "dot:", np.dot(theta[:, :,i, j].reshape(3,3,1,1).transpose(3,2,0,1), xp[:, :, i*s:i*s+HH-1, j*s:j*s+WW-1]).shape
+      print (xp[:, :, i*s:i*s+HH, j*s:j*s+WW]).shape
+      print theta.shape
+      print out[:, :, i, j].shape
+      print (np.einsum('abcd,xycd->abxy', xp[:, :, i*s:i*s+HH, j*s:j*s+WW], theta)).shape
+      out[:, :, i, j] = np.einsum('abcd,xycd->ab', xp[:, :, i*s:i*s+HH, j*s:j*s+WW], theta) + theta0
+        
+        
+  #print out
+  #print out.shape
+  """
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -183,8 +213,27 @@ def conv_backward_naive(dout, cache):
   # TODO: Implement the convolutional backward pass.                          #
   #############################################################################
   # 20-22 lines of code expected
-
-
+  
+  x, theta, theta0, conv_param = cache
+  m, C, H, W = x.shape
+  K, _, HH, WW = theta.shape
+  s = conv_param['stride']
+  p = conv_param['pad']
+  hi = 1 + (H + 2 * p - HH) / s
+  wi = 1 + (W + 2 * p - WW) / s
+  xp = np.lib.pad(x,((0,0), (0,0), (p,p), (p,p)), 'constant', constant_values=0)
+  dxp = np.zeros_like(xp)
+  dtheta = np.zeros_like(theta)
+  dtheta0 = np.zeros_like(theta0)
+  for i in range(m):
+    for j in range(K):
+      for k in range(hi):
+        for l in range(wi):
+          dxp[i, :, k*s:k*s+HH, l*s:l*s+WW] += theta[j] * dout[i, j, k, l]
+          dtheta[j] += np.dot(xp[i, :, k*s:k*s+HH, l*s:l*s+WW], dout[i, j, k, l])
+    dtheta0 += np.sum(dout[i], axis=(1,2))
+  dx = dxp[:, :, p:-p, p:-p]
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -211,8 +260,20 @@ def max_pool_forward_naive(x, pool_param):
   # TODO: Implement the max pooling forward pass                              #
   #############################################################################
   # 12-13 lines of code expected
-
-  pass
+  
+  m, C, H, W = x.shape
+  s = pool_param['stride']
+  ph = pool_param['pool_height']
+  pw = pool_param['pool_width']
+  hi = 1 + (H - ph) / s
+  wi = 1 + (W - pw) / s
+  out = np.zeros((m,C,hi,wi))
+  for i in range(m):
+    for j in range(C):
+      for k in range(hi):
+        for l in range(wi):
+          out[i, j, k ,l] = np.max(x[i,j,k*s:k*s+ph,l*s:l*s+pw])
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -236,8 +297,23 @@ def max_pool_backward_naive(dout, cache):
   # TODO: Implement the max pooling backward pass                             #
   #############################################################################
   # 15 lines of code expected
-
-  pass
+  
+  x, pool_param = cache
+  m, C, H, W = x.shape
+  s = pool_param['stride']
+  ph = pool_param['pool_height']
+  pw = pool_param['pool_width']
+  hi = 1 + (H - ph) / s
+  wi = 1 + (W - pw) / s
+  dx = np.zeros_like(x)
+  from numpy import unravel_index
+  for i in range(m):
+    for j in range(C):
+      for k in range(hi):
+        for l in range(wi):
+          mh, mw = unravel_index(np.argmax(x[i,j,k*s:k*s+ph,l*s:l*s+pw]), x[i,j,k*s:k*s+ph,l*s:l*s+pw].shape)
+          dx[i, j, k*s + mh , l*s + mw] += dout[i, j, k, l]
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
