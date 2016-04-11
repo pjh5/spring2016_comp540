@@ -24,6 +24,7 @@ import cnn
 from layer_utils import conv_relu_pool_forward, conv_relu_pool_backward
 from layer_utils import conv_relu_forward, conv_relu_backward
 import layers
+import sys
 
 ###################################################################################
 #  rel_error function useful for gradient checks                                  #
@@ -376,7 +377,7 @@ if model.params != {}:
 # result in very high training accuracy and comparatively low validation          #
 # accuracy.                                                                       #
 ###################################################################################
-
+"""
 num_train = 100
 small_data = {
   'X_train': data['X_train'][:num_train],
@@ -409,7 +410,8 @@ if model.params != {}:
   plt.xlabel('epoch')
   plt.ylabel('accuracy')
   plt.show()
-
+"""
+sys.stdout.flush()
 ###################################################################################
 # Train the net                                                                   #
 #                                                                                 #
@@ -417,16 +419,16 @@ if model.params != {}:
 # should achieve greater than 40% accuracy on the training set:                   #
 ###################################################################################
 
-model = cnn.ThreeLayerConvNet(weight_scale=0.001, hidden_dim=500, reg=0.001)
+model = cnn.ThreeLayerConvNet(weight_scale=0.001, num_filters=96, hidden_dim=500, reg=0.001)
 
 if model.params != {}:
   asolver = solver.Solver(model, data,
-                num_epochs=1, batch_size=50,
+                num_epochs=10, batch_size=100,
                 update_rule='adam',
                 optim_config={
-                  'learning_rate': 1e-3,
+                  'learning_rate': 1e-4,
                 },
-                verbose=True, print_every=1)
+                verbose=True, print_every=50)
   asolver.train()
 
 ###################################################################################
