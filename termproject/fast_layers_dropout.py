@@ -10,7 +10,7 @@ except ImportError:
 from im2col import *
 
 
-def conv_forward_im2col(x, w, b, conv_param, drop_p):
+def conv_forward_im2col(x, w, b, conv_param, drop_p=0.5):
   """
   A fast implementation of the forward pass for a convolutional layer
   based on im2col and col2im.
@@ -18,14 +18,14 @@ def conv_forward_im2col(x, w, b, conv_param, drop_p):
   N, C, H, W = x.shape
   num_filters, _, filter_height, filter_width = w.shape
   stride, pad = conv_param['stride'], conv_param['pad']
-  
-  # Dropout
-  drops = np.random.random(w.shape) > drop_p
-  w_drop = np.multiply(w, drops)
 
   # Check dimensions
   assert (W + 2 * pad - filter_width) % stride == 0, 'width does not work'
   assert (H + 2 * pad - filter_height) % stride == 0, 'height does not work'
+  
+  # Dropout
+  drops = np.random.random(w.shape) > drop_p
+  w_drop = np.multiply(w, drops)
 
   # Create output
   out_height = (H + 2 * pad - filter_height) / stride + 1
@@ -43,7 +43,7 @@ def conv_forward_im2col(x, w, b, conv_param, drop_p):
   return out, cache
 
 
-def conv_forward_strides(x, w, b, conv_param):
+def conv_forward_strides(x, w, b, conv_param, drop_p=0.5):
   N, C, H, W = x.shape
   F, _, HH, WW = w.shape
   stride, pad = conv_param['stride'], conv_param['pad']
@@ -51,6 +51,10 @@ def conv_forward_strides(x, w, b, conv_param):
   # Check dimensions
   assert (W + 2 * pad - WW) % stride == 0, 'width does not work'
   assert (H + 2 * pad - HH) % stride == 0, 'height does not work'
+  
+  # Dropout
+  drops = np.random.random(w.shape) > drop_p
+  w_drop = np.multiply(w, drops)
 
   # Pad the input
   p = pad
@@ -72,7 +76,7 @@ def conv_forward_strides(x, w, b, conv_param):
   x_cols.shape = (C * HH * WW, N * out_h * out_w)
 
   # Now all our convolutions are a big matrix multiply
-  res = w.reshape(F, -1).dot(x_cols) + b.reshape(-1, 1)
+  res = w_drop.reshape(F, -1).dot(x_cols) + b.reshape(-1, 1)
 
   # Reshape the output
   res.shape = (F, N, out_h, out_w)
@@ -83,7 +87,7 @@ def conv_forward_strides(x, w, b, conv_param):
   # comparison we won't either
   out = np.ascontiguousarray(out)
 
-  cache = (x, w, b, conv_param, x_cols)
+  cache = (x, w, b, conv_param, x_cols, drops)
   return out, cache
   
 
@@ -94,13 +98,16 @@ def conv_backward_strides(dout, cache):
   N, C, H, W = x.shape
   F, _, HH, WW = w.shape
   _, _, out_h, out_w = dout.shape
+  
+  # Dropout
+  w_drop = np.multiply(w, drops)
 
   db = np.sum(dout, axis=(0, 2, 3))
 
   dout_reshaped = dout.transpose(1, 0, 2, 3).reshape(F, -1)
   dw = dout_reshaped.dot(x_cols.T).reshape(w.shape)
 
-  dx_cols = w.reshape(F, -1).T.dot(dout_reshaped)
+  dx_cols = w_drop.reshape(F, -1).T.dot(dout_reshaped)
   dx_cols.shape = (C, HH, WW, N, out_h, out_w)
   dx = col2im_6d_cython(dx_cols, N, C, H, W, HH, WW, pad, stride)
 
