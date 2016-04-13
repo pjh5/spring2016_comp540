@@ -1,3 +1,12 @@
 hw2/part2/music
 hw3/datasets
 hw4/data
+hw5/build
+data
+music
+*.pyc
+*.pyd
+*.pdf
+*.zip
+*.png
+*.PNG
