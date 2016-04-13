@@ -239,7 +239,7 @@ class Solver(object):
         self.epoch += 1
         for k in self.optim_configs:
           self.optim_configs[k]['learning_rate'] *= self.lr_decay
-
+        self.model.save()
       # Check train and val accuracy on the first iteration, the last
       # iteration, and at the end of each epoch.
       first_it = (t == 0)

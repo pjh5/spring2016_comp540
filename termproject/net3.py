@@ -45,7 +45,7 @@ small_data = {
 }
 
 import cnn3
-model = cnn3.ConvNet(weight_scale=0.03, num_filters=[96,256,384], hidden_dim=[1000, 1000], reg=0.0001)
+model = cnn3.ConvNet(weight_scale=0.03, num_filters=[96,256,384], hidden_dim=[1000, 1000], reg=0.0001, load=False)
 """
 if model.params != {}:
   asolver = solver.Solver(model, small_data,
