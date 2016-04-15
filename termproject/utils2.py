@@ -12,6 +12,7 @@ from matplotlib import pyplot as plt
 from knn import KNNClassifier
 from sklearn.metrics import confusion_matrix
 
+
 def read_folder(base_dir, min=0, max=-1, flatten=True):
 
 	#read only max files if stated
