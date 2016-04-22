@@ -2,6 +2,7 @@
 
 TOOLS=./build/tools
 
+
 $TOOLS/caffe train \
     --solver=examples/cifar10/cifar10_my_solver.prototxt \
 
