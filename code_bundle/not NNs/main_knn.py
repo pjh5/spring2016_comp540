@@ -1,13 +1,9 @@
 import utils
 from knn import KNNClassifier
-from one_vs_all import one_vs_allLogisticRegressor
 import numpy as np
-from softmax import softmax_loss_naive, softmax_loss_vectorized
-from softmax import SoftmaxClassifier
 from sklearn import cross_validation
 import csv
 import sys
-from sklearn.neighbors import KNeighborsClassifier
 from matplotlib import pyplot as plt
 
 classes=["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
@@ -90,7 +86,7 @@ l = np.concatenate((ids, labels), axis=1)
 out = open('testLabels.csv', 'w')
 for row in l:
     for column in row:
-        out.write('%s,' % column)
+        out.write('%s' % column)
     out.write('\n')
 out.close()
 

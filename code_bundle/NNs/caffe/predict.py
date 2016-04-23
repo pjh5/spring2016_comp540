@@ -46,7 +46,7 @@ net = caffe.Classifier(MODEL_FILE, PRETRAINED, image_dims=(32, 32), mean=arr[0])
 # this loop predicts on the test dataset in batches of 1000 pictures
 batch = 1000
 nbatches = np.int(ntest / batch)
-
+print "Predicting on the test dataset...\n"
 for i in range(nbatches):
 	sys.stdout.write("\rIteration {0}/{1}".format((i + 1), (nbatches)))
 	sys.stdout.flush()
@@ -62,11 +62,15 @@ labels = np.array(labels).reshape((len(labels), 1))
 
 l = np.concatenate((ids, labels), axis=1)
 
+# write output file
 out = open('testLabels.csv', 'w')
+out.write('%s' % 'id,label')
+out.write('\n')
+
 for row in l:
-    for column in row:
-        out.write('%s' % column)
-    out.write('\n')
+	out.write('%s,' % row[0])
+	out.write('%s' % row[1])
+	out.write('\n')
 out.close()
 
-print ("Done!")
+print ("\nDone!")
