@@ -90,12 +90,18 @@ for j in range(0, 6):
 ids = np.array(ids).reshape((len(ids), 1))
 labels = np.array(labels).reshape((len(labels), 1))
 
-ids = np.array(ids).reshape(1,len(ids))
-labels = np.array(labels).reshape(1,len(labels))
-l = np.zeros(ids.size, dtype=[('var1', int), ('var2', 'S21')])
-l['var1'] = ids
-l['var2'] = labels
 
-np.savetxt('testLabelsSVM_part3.csv', l, fmt="%d,%s", delimiter=',')
+l = np.concatenate((ids, labels), axis=1)
+
+# write output file
+out = open('testLabels.csv', 'w')
+out.write('%s' % 'id,label')
+out.write('\n')
+
+for row in l:
+	out.write('%s,' % row[0])
+	out.write('%s' % row[1])
+	out.write('\n')
+out.close()
 """
 print ("\nDone!")

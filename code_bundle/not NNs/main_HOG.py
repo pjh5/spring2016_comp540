@@ -79,11 +79,13 @@ labels = np.array(labels).reshape((len(labels), 1))
 l = np.concatenate((ids, labels), axis=1)
 
 out = open('testLabels.csv', 'w')
-for row in l:
-    for column in row:
-        out.write('%s,' % column)
-    out.write('\n')
-out.close()
+out.write('%s' % 'id,label')
+out.write('\n')
 
-print ("Done!")
+for row in l:
+	out.write('%s,' % row[0])
+	out.write('%s' % row[1])
+	out.write('\n')
+out.close()
 """
+print ("Done!")
